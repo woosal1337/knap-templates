@@ -19,8 +19,10 @@ describe('template data', () => {
 		expect(() => parseTemplateData(source)).toThrow('Use one JSON object');
 	});
 
-	it('returns the JSON path from a Knap comment', () => {
-		const template = '{# Knap input:examples/machine.json. Store references only. #}';
+	it.each([
+		'{# Knap input:examples/machine.json. Store references only. #}',
+		'{# Knap input: examples/machine.json. Store references only. #}',
+	])('returns the JSON path from a Knap comment: %s', template => {
 		expect(findDataDirective(template)).toBe('examples/machine.json');
 	});
 });

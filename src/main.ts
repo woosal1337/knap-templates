@@ -1,8 +1,10 @@
 import {
+	MarkdownView,
 	Notice,
 	Plugin,
 	TFile,
 	type Menu,
+	type WorkspaceLeaf,
 } from 'obsidian';
 import {
 	findDataDirective,
@@ -18,6 +20,10 @@ import {
 } from './settings';
 import { TemplateService } from './services/template-service';
 import { RenderTemplateModal } from './ui/render-modal';
+import {
+	KNAP_PREVIEW_VIEW_TYPE,
+	KnapTemplatePreviewView,
+} from './ui/preview-view';
 import { TemplatePicker } from './ui/template-picker';
 
 export default class KnapTemplatesPlugin extends Plugin {
@@ -26,11 +32,37 @@ export default class KnapTemplatesPlugin extends Plugin {
 		templateFolders: [...DEFAULT_SETTINGS.templateFolders],
 	};
 	private service!: TemplateService;
+	private readonly sourceViewBypass = new WeakSet<WorkspaceLeaf>();
 
 	override async onload(): Promise<void> {
 		await this.loadSettings();
 		this.service = new TemplateService(this.app);
 		this.addSettingTab(new KnapTemplatesSettingTab(this.app, this));
+		this.registerView(KNAP_PREVIEW_VIEW_TYPE, leaf => new KnapTemplatePreviewView(leaf, {
+			allowRegex: () => this.settings.allowRegex,
+			createNote: file => {
+				void this.openRenderModal(file);
+			},
+			editSource: (leaf, file) => {
+				void this.openSourceEditor(leaf, file);
+			},
+			service: this.service,
+		}));
+
+		this.registerEvent(this.app.workspace.on('file-open', file => {
+			if (file) {
+				window.setTimeout(() => {
+					void this.openPreviewIfConfigured(file);
+				}, 0);
+			}
+		}));
+
+		this.app.workspace.onLayoutReady(() => {
+			const file = this.app.workspace.getActiveFile();
+			if (file) {
+				void this.openPreviewIfConfigured(file);
+			}
+		});
 
 		this.addRibbonIcon('file-output', 'Create note from Knap template', () => {
 			void this.openTemplatePicker();
@@ -41,6 +73,24 @@ export default class KnapTemplatesPlugin extends Plugin {
 			name: 'Create note from template',
 			callback: () => {
 				void this.openTemplatePicker();
+			},
+		});
+
+		this.addCommand({
+			id: 'open-active-template-preview',
+			name: 'Open active template preview',
+			checkCallback: checking => {
+				const file = this.app.workspace.getActiveFile();
+				if (!file || !this.isConfiguredTemplate(file)) {
+					return false;
+				}
+				if (!checking) {
+					const leaf = this.app.workspace.getMostRecentLeaf();
+					if (leaf) {
+						void this.openPreview(leaf, file);
+					}
+				}
+				return true;
 			},
 		});
 
@@ -92,6 +142,48 @@ export default class KnapTemplatesPlugin extends Plugin {
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+	}
+
+	private isConfiguredTemplate(file: TFile): boolean {
+		return this.service.isTemplateFile(file)
+			&& this.service.isInTemplateFolder(file, this.settings.templateFolders);
+	}
+
+	private async openPreviewIfConfigured(file: TFile): Promise<void> {
+		if (!this.settings.openTemplatesInPreview || !this.isConfiguredTemplate(file)) {
+			return;
+		}
+
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (!view || view.file?.path !== file.path) {
+			return;
+		}
+
+		if (this.sourceViewBypass.delete(view.leaf)) {
+			return;
+		}
+
+		await this.openPreview(view.leaf, file);
+	}
+
+	private async openPreview(leaf: WorkspaceLeaf, file: TFile): Promise<void> {
+		await leaf.setViewState({
+			active: true,
+			state: { file: file.path },
+			type: KNAP_PREVIEW_VIEW_TYPE,
+		});
+	}
+
+	private async openSourceEditor(leaf: WorkspaceLeaf, file: TFile): Promise<void> {
+		this.sourceViewBypass.add(leaf);
+		await leaf.setViewState({
+			active: true,
+			state: {
+				file: file.path,
+				mode: 'source',
+			},
+			type: 'markdown',
+		});
 	}
 
 	private async loadSettings(): Promise<void> {

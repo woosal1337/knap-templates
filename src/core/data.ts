@@ -1,6 +1,6 @@
 import type { TemplateVariables } from 'knap';
 
-const DATA_DIRECTIVE = /\binput:([^\s#]+?\.json)\b/iu;
+const DATA_DIRECTIVE = /\binput:\s*([^\s#]+?\.json)\b/iu;
 const INVALID_FILE_NAME = '\\/:*?"<>|';
 
 export class TemplateDataError extends Error {

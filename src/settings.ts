@@ -8,6 +8,7 @@ import type KnapTemplatesPlugin from './main';
 
 export interface KnapTemplatesSettings {
 	allowRegex: boolean;
+	openTemplatesInPreview: boolean;
 	openAfterCreate: boolean;
 	outputFolder: string;
 	templateFolders: string[];
@@ -15,6 +16,7 @@ export interface KnapTemplatesSettings {
 
 export const DEFAULT_SETTINGS: KnapTemplatesSettings = {
 	allowRegex: false,
+	openTemplatesInPreview: true,
 	openAfterCreate: true,
 	outputFolder: '',
 	templateFolders: ['Templates'],
@@ -57,6 +59,15 @@ export class KnapTemplatesSettingTab extends PluginSettingTab {
 			{
 				control: {
 					defaultValue: true,
+					key: 'openTemplatesInPreview',
+					type: 'toggle',
+				},
+				desc: 'Show configured template files as rendered Knap previews. Select the pencil action to edit a template.',
+				name: 'Open templates in Knap preview',
+			},
+			{
+				control: {
+					defaultValue: true,
 					key: 'openAfterCreate',
 					type: 'toggle',
 				},
@@ -92,6 +103,9 @@ export class KnapTemplatesSettingTab extends PluginSettingTab {
 				break;
 			case 'openAfterCreate':
 				this.plugin.settings.openAfterCreate = Boolean(value);
+				break;
+			case 'openTemplatesInPreview':
+				this.plugin.settings.openTemplatesInPreview = Boolean(value);
 				break;
 			case 'allowRegex':
 				this.plugin.settings.allowRegex = Boolean(value);
@@ -129,6 +143,16 @@ export class KnapTemplatesSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.outputFolder)
 				.onChange(async value => {
 					this.plugin.settings.outputFolder = value.trim().replace(/^\/+|\/+$/gu, '');
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Open templates in Knap preview')
+			.setDesc('Show configured template files as rendered Knap previews. Select the pencil action to edit a template.')
+			.addToggle(component => component
+				.setValue(this.plugin.settings.openTemplatesInPreview)
+				.onChange(async value => {
+					this.plugin.settings.openTemplatesInPreview = value;
 					await this.plugin.saveSettings();
 				}));
 

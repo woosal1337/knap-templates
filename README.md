@@ -12,6 +12,7 @@ The project is in private alpha. The repository is ready for an open-source rele
 
 - Select templates from one or more vault folders.
 - Load template variables from a JSON file.
+- Open configured templates as rendered Knap previews.
 - Edit JSON data and inspect a live Markdown preview.
 - Create a new Markdown note without replacing the template or an existing note.
 - Validate the active template from the command palette.
@@ -37,8 +38,8 @@ Use a separate test vault during development. Obsidian recommends this step beca
 
 1. Open Knap Templates in Obsidian settings.
 2. Enter one template folder per line.
-3. Run **Knap Templates: Create note from template** from the command palette.
-4. Select a template.
+3. Open a configured template to see its rendered Knap preview.
+4. Select the pencil action to edit the template source, or select the file-output action to create a note.
 5. Review the data and output path, then select **Create note**.
 
 The plugin also adds **Render with Knap** to the file menu for templates in a configured folder.
@@ -48,7 +49,7 @@ The plugin also adds **Render with Knap** to the file menu for templates in a co
 Add an optional Knap comment to link a default JSON file:
 
 ```markdown
-{# Knap input:examples/machine.json #}
+{# Knap input: examples/machine.json #}
 ---
 {{ title | yaml_property:"title" }}
 tags:
@@ -81,6 +82,7 @@ The JSON editor accepts one object. Its keys become Knap variables.
 | Command | Result |
 | --- | --- |
 | Create note from template | Select a configured template and open the render screen. |
+| Open active template preview | Render the active configured template in its editor tab. |
 | Render active template | Open the render screen for the active Markdown or Knap file. |
 | Validate active template | Check Knap syntax and show the first source error. |
 
@@ -104,7 +106,7 @@ The repository follows the current Obsidian sample-plugin and community-review s
 
 - `src/core/` contains the Knap adapter and pure validation functions.
 - `src/services/` owns vault file access.
-- `src/ui/` contains the template picker and render modal.
+- `src/ui/` contains the Knap preview view, template picker, and render modal.
 - `tests/` contains unit tests for rendering, data, and paths.
 - `.github/workflows/` checks every change and creates attested draft releases.
 
