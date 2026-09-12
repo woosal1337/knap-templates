@@ -32,7 +32,8 @@ export default class KnapTemplatesPlugin extends Plugin {
 		templateFolders: [...DEFAULT_SETTINGS.templateFolders],
 	};
 	private service!: TemplateService;
-	private readonly sourceViewBypass = new WeakSet<WorkspaceLeaf>();
+	private previewTimer: number | null = null;
+	private readonly sourceEditorFiles = new WeakMap<WorkspaceLeaf, string>();
 
 	override async onload(): Promise<void> {
 		await this.loadSettings();
@@ -51,11 +52,17 @@ export default class KnapTemplatesPlugin extends Plugin {
 
 		this.registerEvent(this.app.workspace.on('file-open', file => {
 			if (file) {
-				window.setTimeout(() => {
-					void this.openPreviewIfConfigured(file);
-				}, 0);
+				this.scheduleConfiguredPreview();
 			}
 		}));
+		this.registerEvent(this.app.workspace.on('layout-change', () => {
+			this.scheduleConfiguredPreview();
+		}));
+		this.register(() => {
+			if (this.previewTimer !== null) {
+				window.clearTimeout(this.previewTimer);
+			}
+		});
 
 		this.app.workspace.onLayoutReady(() => {
 			const file = this.app.workspace.getActiveFile();
@@ -150,20 +157,39 @@ export default class KnapTemplatesPlugin extends Plugin {
 	}
 
 	private async openPreviewIfConfigured(file: TFile): Promise<void> {
-		if (!this.settings.openTemplatesInPreview || !this.isConfiguredTemplate(file)) {
-			return;
-		}
-
 		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (!view || view.file?.path !== file.path) {
 			return;
 		}
 
-		if (this.sourceViewBypass.delete(view.leaf)) {
+		const sourceEditorFile = this.sourceEditorFiles.get(view.leaf);
+		if (sourceEditorFile && sourceEditorFile !== file.path) {
+			this.sourceEditorFiles.delete(view.leaf);
+		}
+
+		if (!this.settings.openTemplatesInPreview || !this.isConfiguredTemplate(file)) {
 			return;
 		}
 
+		if (sourceEditorFile === file.path && view.getMode() === 'source') {
+			return;
+		}
+
+		this.sourceEditorFiles.delete(view.leaf);
 		await this.openPreview(view.leaf, file);
+	}
+
+	private scheduleConfiguredPreview(): void {
+		if (this.previewTimer !== null) {
+			window.clearTimeout(this.previewTimer);
+		}
+		this.previewTimer = window.setTimeout(() => {
+			this.previewTimer = null;
+			const file = this.app.workspace.getActiveFile();
+			if (file) {
+				void this.openPreviewIfConfigured(file);
+			}
+		}, 0);
 	}
 
 	private async openPreview(leaf: WorkspaceLeaf, file: TFile): Promise<void> {
@@ -175,7 +201,7 @@ export default class KnapTemplatesPlugin extends Plugin {
 	}
 
 	private async openSourceEditor(leaf: WorkspaceLeaf, file: TFile): Promise<void> {
-		this.sourceViewBypass.add(leaf);
+		this.sourceEditorFiles.set(leaf, file.path);
 		await leaf.setViewState({
 			active: true,
 			state: {

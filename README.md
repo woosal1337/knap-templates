@@ -40,7 +40,8 @@ Use a separate test vault during development. Obsidian recommends this step beca
 2. Enter one template folder per line.
 3. Open a configured template to see its rendered Knap preview.
 4. Select the pencil action to edit the template source, or select the file-output action to create a note.
-5. Review the data and output path, then select **Create note**.
+5. Select the Obsidian reading-view button while editing to return to the rendered Knap preview.
+6. Review the data and output path, then select **Create note**.
 
 The plugin also adds **Render with Knap** to the file menu for templates in a configured folder.
 
