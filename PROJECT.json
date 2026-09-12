@@ -1,0 +1,15 @@
+{
+  "name": "knap-templates",
+  "board": {
+    "key": "TD",
+    "org": "Personal",
+    "tool": "elliptic",
+    "task": "TD-122"
+  },
+  "remote": "git@github.com:woosal1337/knap-templates.git",
+  "machines": {
+    "macbook": {
+      "repo": "/Users/ege/Documents/GitHub/knap-templates"
+    }
+  }
+}
