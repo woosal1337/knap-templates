@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a repeatable problem in Knap Templates.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include secrets or private vault content.
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian version
+      placeholder: 1.13.7
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use a small template and data sample without private content.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true

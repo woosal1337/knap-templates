@@ -1,0 +1,182 @@
+.knap-render-modal {
+	inline-size: min(56rem, calc(100vw - 2rem));
+	max-inline-size: 100%;
+}
+
+.knap-preview-view {
+	background: var(--background-primary);
+}
+
+.knap-preview-view-scroll {
+	block-size: 100%;
+}
+
+.knap-preview-view-sizer {
+	padding-block-end: var(--file-margins);
+}
+
+.knap-preview-view-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--size-4-2) var(--size-4-4);
+	margin-block-end: var(--size-4-6);
+	padding-block-end: var(--size-4-3);
+	border-block-end: 1px solid var(--background-modifier-border);
+}
+
+.knap-preview-view-label {
+	font-weight: var(--font-semibold);
+}
+
+.knap-preview-view-status {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	white-space: pre-wrap;
+}
+
+.knap-preview-view-error {
+	color: var(--text-error);
+}
+
+.knap-preview-view-content {
+	inline-size: 100%;
+}
+
+.knap-render-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-5);
+}
+
+.knap-template-source,
+.knap-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-1);
+}
+
+.knap-template-source code {
+	overflow-wrap: anywhere;
+}
+
+.knap-field-label {
+	color: var(--text-normal);
+	font-weight: var(--font-semibold);
+}
+
+.knap-field-description,
+.knap-field-error {
+	margin: 0;
+}
+
+.knap-field-description {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.knap-field-error,
+.knap-message-error {
+	color: var(--text-error);
+	white-space: pre-wrap;
+}
+
+.knap-field-control input,
+.knap-field-control textarea {
+	inline-size: 100%;
+}
+
+.knap-data-editor {
+	min-block-size: 12rem;
+	resize: vertical;
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-small);
+}
+
+.knap-inline-control {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: var(--size-4-3);
+	align-items: center;
+}
+
+.knap-message {
+	min-block-size: 1.5em;
+	white-space: pre-wrap;
+}
+
+.knap-preview-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+}
+
+.knap-preview-section h3 {
+	margin: 0;
+}
+
+.knap-preview {
+	min-block-size: 10rem;
+	max-block-size: min(40vh, 28rem);
+	overflow: auto;
+	padding: var(--size-4-4);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--background-primary);
+	overscroll-behavior: contain;
+}
+
+.knap-button-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: var(--size-4-3);
+	padding-block-end: env(safe-area-inset-bottom, 0);
+}
+
+.knap-button-row button {
+	min-block-size: 2.5rem;
+}
+
+.knap-is-loading::after {
+	display: inline-block;
+	inline-size: 0.8em;
+	block-size: 0.8em;
+	margin-inline-start: 0.5em;
+	border: 2px solid currentColor;
+	border-block-start-color: transparent;
+	border-radius: 50%;
+	content: '';
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.knap-is-loading::after {
+		animation: knap-spin 700ms linear infinite;
+	}
+}
+
+@media (max-width: 32rem) {
+	.knap-render-modal {
+		inline-size: calc(100vw - 1rem);
+	}
+
+	.knap-inline-control {
+		grid-template-columns: 1fr;
+	}
+
+	.knap-inline-control button {
+		inline-size: 100%;
+	}
+}
+
+@media (forced-colors: active) {
+	.knap-preview {
+		border-color: CanvasText;
+	}
+}
+
+@keyframes knap-spin {
+	to {
+		transform: rotate(1turn);
+	}
+}

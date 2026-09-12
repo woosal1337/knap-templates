@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest a focused improvement to Knap Templates.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the task that is difficult now.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Requested result
+      description: Describe what the plugin must make possible.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: List any workflow that you use now.

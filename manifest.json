@@ -1,0 +1,10 @@
+{
+  "id": "knap-templates",
+  "name": "Knap Templates",
+  "version": "1.0.0",
+  "minAppVersion": "1.12.7",
+  "description": "Render Knap templates into standard Markdown notes with JSON data and a live preview.",
+  "author": "Ege",
+  "authorUrl": "https://github.com/woosal1337",
+  "isDesktopOnly": false
+}
