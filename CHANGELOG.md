@@ -10,3 +10,4 @@
 - Add active-template validation.
 - Accept linked-data comments with or without a space after `input:`.
 - Add desktop and mobile support.
+- Update build and test tools to patched releases.
