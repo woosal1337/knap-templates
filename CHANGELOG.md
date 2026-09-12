@@ -17,3 +17,7 @@
 - Accept linked-data comments with or without a space after `input:`.
 - Add desktop and mobile support.
 - Update build and test tools to patched releases.
+
+### Interface
+
+- Align the template preview with the native Obsidian reading view.

@@ -29,6 +29,7 @@ function errorMessage(error: unknown): string {
 
 export class KnapTemplatePreviewView extends FileView {
 	private dataFilePath: string | null = null;
+	private inlineTitleEl: HTMLDivElement | null = null;
 	private previewChild: MarkdownRenderChild | null = null;
 	private previewEl: HTMLDivElement | null = null;
 	private revision = 0;
@@ -99,19 +100,24 @@ export class KnapTemplatePreviewView extends FileView {
 	}
 
 	private buildShell(): void {
-		if (this.previewEl && this.statusEl) {
+		if (this.inlineTitleEl && this.previewEl && this.statusEl) {
 			return;
 		}
 
 		this.contentEl.empty();
-		this.contentEl.addClass('knap-preview-view');
-		const headerEl = this.contentEl.createDiv({ cls: 'knap-preview-view-header' });
+		this.contentEl.addClass('knap-preview-view', 'markdown-reading-view');
+		const scrollEl = this.contentEl.createDiv({
+			cls: 'knap-preview-view-scroll markdown-preview-view is-readable-line-width',
+		});
+		const sizerEl = scrollEl.createDiv({ cls: 'knap-preview-view-sizer markdown-preview-sizer' });
+		this.inlineTitleEl = sizerEl.createDiv({ cls: 'inline-title' });
+		const headerEl = sizerEl.createDiv({ cls: 'knap-preview-view-header' });
 		headerEl.createSpan({ cls: 'knap-preview-view-label', text: 'Knap preview' });
 		this.statusEl = headerEl.createDiv({
 			attr: { 'aria-live': 'polite', role: 'status' },
 			cls: 'knap-preview-view-status',
 		});
-		this.previewEl = this.contentEl.createDiv({ cls: 'knap-preview-view-content markdown-rendered' });
+		this.previewEl = sizerEl.createDiv({ cls: 'knap-preview-view-content markdown-rendered' });
 	}
 
 	private async renderFile(file: TFile): Promise<void> {
@@ -119,6 +125,7 @@ export class KnapTemplatePreviewView extends FileView {
 		const revision = ++this.revision;
 		const previewEl = this.previewEl!;
 		const statusEl = this.statusEl!;
+		this.inlineTitleEl!.setText(file.basename);
 		this.dataFilePath = null;
 		previewEl.setAttr('aria-busy', 'true');
 		statusEl.removeClass('knap-preview-view-error');
