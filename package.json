@@ -36,7 +36,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "knap": "0.4.2"
+    "knap": "0.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
